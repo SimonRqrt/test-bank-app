@@ -1,5 +1,5 @@
 import pytest
-from mock_alchemy.mocking import UnifiedAlchemyMagicMock
+from alchemy_mock.mocking import UnifiedAlchemyMagicMock
 
 @pytest.fixture(scope="function")
 def session(engine, tables):
