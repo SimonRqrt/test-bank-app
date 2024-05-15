@@ -20,8 +20,8 @@ def main():
     account1.transfer(account2,50)
     session.commit()
 
-    print("Solde du compte 1:", account1.balance)
-    print("Solde du compte 2:", account2.balance)
+    print("Solde du compte 1:", account1.get_balance())
+    print("Solde du compte 2:", account2.get_balance())
 
 if __name__ == "__main__":
     main()
