@@ -11,4 +11,6 @@ def init_db():
 
     except Exception as e:
         print(e)
+
+    return engine
     ######

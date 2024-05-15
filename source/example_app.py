@@ -7,16 +7,17 @@ def main():
     Session = sessionmaker(bind=db.engine)
     session = Session()
 
-    account1 = Account(account_id=1, balance=0.0)
-    account2 = Account(account_id=2, balance=0.0)
-    session.add_all([account1, account2])
+    account1 = Account.create_account(1, 0.0)
+    account2 = Account.create_account(2, 0.0)
+    session.add(account1)
+    session.add(account2)
     session.commit()
 
-    account1.deposit(100)
-    account2.deposit(50)
+    account1.deposit(100,session)
+    account2.deposit(50,session)
     session.commit()
 
-    account1.transfer(2,50)
+    account1.transfer(account2,50,session)
     session.commit()
 
     print("Solde du compte 1:", account1.balance)

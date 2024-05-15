@@ -1,3 +1,4 @@
+from datetime import datetime
 from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime
 from sqlalchemy.orm import relationship, declarative_base
 
@@ -15,23 +16,32 @@ class Account(Base):
 
     def create_account(account_id, balance):
         account = Account(account_id=account_id, balance=balance)
-        return "Account created"
+        print("Account created")
+        return account
+    
+    def create_transaction(self, amount, transaction_type):
+        transaction = Transaction(amount=amount, type=transaction_type, timestamp=datetime.now(), account=self)
+        return transaction
 
-    def deposit(self, amount):
+    def deposit(self, amount, session):
         self.balance += amount
+        new_transaction = self.create_transaction(amount, "deposit")
+        session.add(new_transaction)
         return self.balance
 
-    def withdraw(self, amount):
+    def withdraw(self, amount, session):
         if self.balance >= amount:
             self.balance -= amount
+            new_transaction = self.create_transaction(amount, "withdrawal")
+            session.add(new_transaction)
             return self.balance
         else:
-            return "Withdrawal not possible, not enough funds on your account"
+            return "Withdrawal not possible, not enough funds on balance"
         
-    def transfer(self, other_account, amount):
+    def transfer(self, other_account, amount, session):
         if self.balance >= amount:
-            self.balance -= amount
-            other_account.balance += amount
+            self.withdraw(amount, session)
+            other_account.deposit(amount, session)
             return True
         else:
             return False
