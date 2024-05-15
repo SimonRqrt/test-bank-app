@@ -10,38 +10,33 @@ class Account(Base):
     balance = Column(Float, default=0.0)
     transactions = relationship("Transaction", back_populates="account")
 
-    def __init__(self, account_id, balance):
+    def __init__(self, session, account_id, balance):
+        self.session = session
         self.account_id = account_id
         self.balance = balance
-
-    def create_account(account_id, balance):
-        account = Account(account_id=account_id, balance=balance)
-        print("Account created")
-        return account
     
     def create_transaction(self, amount, transaction_type):
         transaction = Transaction(amount=amount, type=transaction_type, timestamp=datetime.now(), account=self)
         return transaction
 
-    def deposit(self, amount, session):
+    def deposit(self, amount):
         self.balance += amount
         new_transaction = self.create_transaction(amount, "deposit")
-        session.add(new_transaction)
+        self.session.add(new_transaction)
         return self.balance
 
-    def withdraw(self, amount, session):
+    def withdraw(self, amount):
         if self.balance >= amount:
             self.balance -= amount
             new_transaction = self.create_transaction(amount, "withdrawal")
-            session.add(new_transaction)
+            self.session.add(new_transaction)
             return self.balance
         else:
             return "Withdrawal not possible, not enough funds on balance"
         
-    def transfer(self, other_account, amount, session):
-        if self.balance >= amount:
-            self.withdraw(amount, session)
-            other_account.deposit(amount, session)
+    def transfer(self, other_account, amount):
+        if self.withdraw(amount):
+            other_account.deposit(amount)
             return True
         else:
             return False
