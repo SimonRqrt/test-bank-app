@@ -20,16 +20,21 @@ class Account(Base):
         return transaction
 
     def deposit(self, amount):
-        self.balance += amount
-        new_transaction = self.create_transaction(amount, "deposit")
-        self.session.add(new_transaction)
-        return self.balance
+        if amount > 0:
+            self.balance += amount
+            new_transaction = self.create_transaction(amount, "deposit")
+            self.session.add(new_transaction)
+            self.session.commit()
+            return self.balance
+        else:
+            return "You can't make a deposit with a negative amount"
 
     def withdraw(self, amount):
         if self.balance >= amount:
             self.balance -= amount
             new_transaction = self.create_transaction(amount, "withdrawal")
             self.session.add(new_transaction)
+            self.session.commit()
             return self.balance
         else:
             return "Withdrawal not possible, not enough funds on balance"
