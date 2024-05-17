@@ -27,17 +27,21 @@ class Account(Base):
             self.session.commit()
             return self.balance
         else:
-            return "You can't make a deposit with a negative amount"
+            raise ValueError("You can't make a deposit with a negative amount")
 
     def withdraw(self, amount):
-        if self.balance >= amount:
+        if amount < 0 :
+            raise ValueError("Amount can't be negative")
+        elif amount == 0 :
+            raise ValueError("Amount must be positive")
+        elif self.balance >= amount:
             self.balance -= amount
             new_transaction = self.create_transaction(amount, "withdrawal")
             self.session.add(new_transaction)
             self.session.commit()
             return self.balance
         else:
-            return "Withdrawal not possible, not enough funds on balance"
+            raise ValueError("Withdrawal not possible, not enough funds on balance")
         
     def transfer(self, other_account, amount):
         if self.withdraw(amount):
