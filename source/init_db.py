@@ -1,5 +1,5 @@
 from sqlalchemy import create_engine
-from source.bank import Base
+from bank import Base
 
 def init_db():
     engine = create_engine('sqlite:///appbank.db')
