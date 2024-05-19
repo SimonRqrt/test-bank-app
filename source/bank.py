@@ -44,11 +44,11 @@ class Account(Base):
             raise ValueError("Withdrawal not possible, not enough funds on balance")
         
     def transfer(self, other_account, amount):
-        if self.withdraw(amount):
-            other_account.deposit(amount)
-            return True
-        else:
+        if self.balance < amount:
             return False
+        self.withdraw(amount)
+        other_account.deposit(amount)
+        return True
 
     def get_balance(self):
         return self.balance
